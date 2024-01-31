@@ -44,16 +44,33 @@ books = [
 def home():
     return render_template("index.html")
 
+# Keep the original get_book route
 @app.route('/get_book', methods=['GET'])
 def get_book():
-    title = request.args.get('title', '')  # Default to empty string if no title provided
-
+    title = request.args.get('title', '')
     for book in books:
         if book['title'].lower() == title.lower():
             return jsonify(book)
-
     return jsonify({'message': 'Book not found'}), 404
 
+# Add a new route for fetching books by ID
+@app.route('/get_book_by_id', methods=['GET'])
+def get_book_by_id():
+    book_id = request.args.get('id', type=int)
+    for book in books:
+        if book['id'] == book_id:
+            return jsonify(book)
+    return jsonify({'message': 'Book not found'}), 404
+
+# Add a new route for fetching books by genre
+@app.route('/get_books_by_genre', methods=['GET'])
+def get_books_by_genre():
+    genre_query = request.args.get('genre', '').lower()
+    filtered_books = [book for book in books if genre_query in book['genre'].lower()]
+    if filtered_books:
+        return jsonify(filtered_books)
+    else:
+        return jsonify({'message': 'No books found with the given genre'}), 404
+
 if __name__ == '__main__':
-    app.run(debug=True)
     app.run(host="0.0.0.0", port=5000)
