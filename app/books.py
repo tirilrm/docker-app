@@ -1,7 +1,3 @@
-from flask import Flask, render_template, request, jsonify
-
-app = Flask(__name__)
-
 books = [
     {
         'id': 1,
@@ -39,20 +35,3 @@ books = [
         'genre': 'Young Adult Dystopian'
     }
 ]
-
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route('/get_book', methods=['GET'])
-def get_book():
-    title = request.args.get('title', '')  # Default to empty string if no title provided
-
-    for book in books:
-        if book['title'].lower() == title.lower():
-            return jsonify(book)
-
-    return jsonify({'message': 'Book not found'}), 404
-
-if __name__ == '__main__':
-    app.run(debug=True)
