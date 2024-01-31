@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html style="background-color: white;">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Finder</title>
+</head>
+<body>
+    <h1 style="color: black; text-align: center; font-size: 100px; font-family: Calibri;" class="uppercase">
+        <br><br><i>Hi there!</i>
+    </h1>
+    <p style="color: black; text-align: center; font-size: 30px; font-family: Calibri;">
+        This is based on a Docker image
+    </p>
+    <form id="book-form" style="text-align: center;">
+        <label for="title" style="font-size: 20px;">Enter Book Title:</label>
+        <input type="text" id="title" name="title" required>
+        <button type="submit">Get Book Info</button>
+    </form>
+    <div id="book-info" style="text-align: center; font-size: 18px;"></div>
+
+    <script>
+        document.getElementById('book-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            fetch(`/get_book?title=${encodeURIComponent(title)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        // Handle not found
+                        document.getElementById('book-info').innerHTML = '<p>Book not found</p>';
+                    } else {
+                        // Handle book found
+                        const bookHtml = `<p>Title: ${data.title}</p>
+                                          <p>Author: ${data.author}</p>
+                                          <p>Publication Year: ${data.publication_year}</p>
+                                          <p>Genre: ${data.genre}</p>`;
+                        document.getElementById('book-info').innerHTML = bookHtml;
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+</html>
+
